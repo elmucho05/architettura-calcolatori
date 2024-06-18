@@ -124,8 +124,6 @@ Spiegazione:
 
 - infine salvi f a 0byte, ricordandoti che vuole 8 byte.
 
-
-
 Ora *facciamo i calcoli all'interno della funzione*:
 
 ```risc-v
@@ -137,8 +135,6 @@ sub x20, x5, x6 //f = x65-x6
 Per poter **restituire f** bisogna copiarlo in un registro di parametri:
 
 `addi x10, x20, 0` : fa x10 = x20 + 0
-
-
 
 Prima del ritorno al programma chiamante, il vecchio valore dei registri va ripristinato, copiandolo **quindi facendo una pop** dallo stack:
 
@@ -153,8 +149,6 @@ La procedura terminal con un'istruzione di salto a registro, usando l'indirizzo 
 
 `jalr x0, 0(x1)`.
 
-
-
 ### Procedure annidate
 
 Le procedure che non chiamano altre procedure sono chiamate procedure *foglia*.
@@ -162,8 +156,6 @@ Le procedure che non chiamano altre procedure sono chiamate procedure *foglia*.
 Esempio: se il programma principale chiama una procedura A passandoci il valore di 3 che viene salvato in x10, a sua volta la procedura A può chiamare una procedura B passandoci il valore 7 che a sua volta andrà nel registro x10. C'è quindi un conflitto nell'uso di x10 e in modo analogo si verifica un conflitto nell'indirizzo di ritorno di B.
 
 - se non affrontiamo delle contromisure, si farebbe in modo che la procedura A non sia più in grado di trasferire il controllo al suo chiamante.
-
-
 
 *Soluzione*
 
@@ -174,8 +166,6 @@ Salvare nello stack tutti i registri il cui contenuto deve essere salvato.
 - Il programma chiamato salverà nello stack il registro di ritorno *x1*, e gli altri registri da preservare, quindi *x8-x9 e x18-27* di cui ha bisogno. 
 
 - Lo stack pointer *sp* sarà aggiornato per tenere conto del numero di registri da memorizzare nello stack, al termine della procedura il contenuto dei registri va repristinato con il contenuto nello stack e lo *sp* andrà repristinato.
-
-
 
 Esempio: **compilazione id una procedura ricorsiva come procedure annidate**
 
@@ -222,8 +212,6 @@ L1: addi x10, x10, -1 //else, l'argomento diventa n-1, fatt(n-1)
 jal x1, fatt //chiama fatt(n-1)
 ```
 
-
-
 L'istruzione successiva è quella che la procedura fattoriale ritorna al termine della sua esecuzione, il risultato si trova in *x10*. Occorre quindi ripristinare il vecchio indirizzo di ritorno e il vecchio valore del parametro e lo stack pointer:
 
 ```risc-v
@@ -240,8 +228,6 @@ Successiavmente nel registro argomento x10 viene memorizzato il prodotto del vec
 Infine la procedura *fatt* salta all'indirizzo di ritorno:
 
 `jalr x0, 0(x1)` //ritorna al chiamante.
-
-
 
 Codice c:
 
@@ -279,5 +265,3 @@ L1: //caso ricorsivo
     mul x10, x10, x6 //n* fatt(n-1)
     jalr x0, 0(x1)//ritorna al chiamante
 ```
-
-
